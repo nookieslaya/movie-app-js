@@ -181,7 +181,6 @@ alt="${show.name}"
 						.join(', ')}</div>
         </div> 
   `
-
 	document.querySelector('#show-details').appendChild(div)
 }
 
@@ -206,6 +205,52 @@ function displayBackgroundImage(type, backgroundPath) {
 	} else {
 		document.querySelector('#show-details').appendChild(overlayDiv)
 	}
+}
+
+// slider
+
+const displaySlider = async () => {
+	const { results } = await fetchAPIData('movie/now_playing')
+	console.log(results)
+
+	results.forEach(movie => {
+		const div = document.createElement('div')
+		div.classList.add('swiper-slide')
+
+		div.innerHTML = `
+		<a href="movie-details.html?id=${movie.id}">
+            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Movie Title" />
+          </a>
+          <h4 class="swiper-rating">
+            <i class="fas fa-star text-secondary"></i> ${movie.vote_average} / 10
+          </h4>
+		`
+		document.querySelector('.swiper-wrapper').appendChild(div)
+
+		initSwiper()
+	})
+}
+
+const initSwiper = () => {
+	const swiper = new Swiper('.swiper', {
+		slidesPerView: 1,
+		spaceBetween: 30,
+		loop: true,
+		autoplay: {
+			delay: 4000,
+		},
+		breakpoints: {
+			500: {
+				slidesPerView: 1,
+			},
+			700: {
+				slidesPerView: 2,
+			},
+			1200: {
+				slidesPerView: 4,
+			},
+		},
+	})
 }
 
 async function fetchAPIData(endpoint) {
@@ -249,6 +294,7 @@ function init() {
 		case '/':
 		case '/index.html':
 			displayPopularMovies()
+			displaySlider()
 			break
 		case '/shows.html':
 			displayPopularShows()
